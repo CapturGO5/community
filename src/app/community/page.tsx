@@ -5,6 +5,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { getEntries } from '@/lib/supabase';
 import { Entry } from '@/lib/types';
 import SubmissionModal from '@/components/SubmissionModal';
+import Image from 'next/image';
 
 export default function CommunityPage() {
   const [entries, setEntries] = useState<Entry[]>([]);
@@ -62,18 +63,22 @@ export default function CommunityPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {entries.map((entry) => (
               <div key={entry.id} className="bg-gray-900 rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={entry.image_url}
                   alt={entry.description || 'Entry image'}
                   className="w-full h-48 object-cover"
+                  width={400}
+                  height={192}
                 />
                 <div className="p-4">
                   <div className="flex items-center gap-2 mb-2">
                     {entry.profile_picture_url && (
-                      <img
+                      <Image
                         src={entry.profile_picture_url}
                         alt={entry.username}
                         className="w-6 h-6 rounded-full"
+                        width={24}
+                        height={24}
                       />
                     )}
                     <span className="font-medium">{entry.username}</span>
@@ -94,7 +99,7 @@ export default function CommunityPage() {
       <SubmissionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSuccess={() => {
+        onSubmitSuccess={() => {
           setIsModalOpen(false);
           // Refresh entries
           getEntries().then(setEntries).catch(console.error);
