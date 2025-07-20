@@ -315,7 +315,7 @@ export default function Profile() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <p className="text-white/70">You haven't submitted an entry for the challenge yet.</p>
+              <p className="text-white/70">You haven&apos;t submitted an entry for the challenge yet.</p>
               <button
                 onClick={() => window.location.href = '/ecosystem'}
                 className="mt-4 px-6 py-3 bg-white text-black rounded-lg hover:bg-gray-200 transition-colors"
