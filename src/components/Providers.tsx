@@ -15,13 +15,8 @@ export default function Providers({
         appearance: {
           theme: 'dark',
           accentColor: '#ffffff',
-          showWalletLoginFirst: false,
-          variables: {
-            radius: '0.5rem',
-            fontFamily: 'inherit'
-          }
-        },
-        defaultChain: 'ethereum'
+          showWalletLoginFirst: false
+        }
       }}
     >
       {children}
