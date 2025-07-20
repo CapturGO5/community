@@ -97,6 +97,7 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({ isOpen, onClos
   }, [handleFileSelection]);
 
   const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
+    // generateUniqueFilename is a stable function, so it doesn't need to be in the dependency array
     e.preventDefault();
     if (!user?.id || !selectedFile) return;
 

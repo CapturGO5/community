@@ -118,10 +118,12 @@ export default function EcosystemContent({ onOpenCarousel, onOpenSubmission }: E
               <div className="bg-white/5 rounded-lg overflow-hidden border border-white/10 hover:border-white/20 transition">
                 {entry.image_url && (
                   <div className="aspect-video relative overflow-hidden">
-                    <img
+                    <Image
                       src={entry.image_url}
                       alt={entry.description || 'Entry image'}
                       className="object-cover w-full h-full"
+                      width={800}
+                      height={450}
                     />
                   </div>
                 )}
