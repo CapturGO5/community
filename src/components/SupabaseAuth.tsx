@@ -2,7 +2,8 @@
 
 import { useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
+import { createOrUpdateUserProfile } from '../lib/supabase';
 
 export default function SupabaseAuth() {
   const { user } = usePrivy();
@@ -15,8 +16,7 @@ export default function SupabaseAuth() {
           await createOrUpdateUserProfile(
             user.id,
             user.email.address,
-            user.email.address.split('@')[0], // Use email prefix as initial name
-            null // No bio initially
+            user.email.address.split('@')[0] // Use email prefix as initial name
           );
 
           // Then sign in with Supabase
