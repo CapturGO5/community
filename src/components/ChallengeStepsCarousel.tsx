@@ -14,18 +14,22 @@ const steps: Step[] = [
   {
     title: 'Step 1: Create a Capture',
     description: 'Install the CapturGO extension and capture your first moment. Make sure to follow our guidelines for a perfect capture.',
+    image: '/images/step1.png'
   },
   {
     title: 'Step 2: Share on Twitter',
     description: 'Take a screenshot or photo that captures your favorite moment in the ecosystem.',
+    image: '/images/step2.png'
   },
   {
     title: 'Step 3: Submit Entry',
     description: 'Submit your image through this page. Add a description to tell your story and inspire others.',
+    image: '/images/step3.png'
   },
   {
     title: 'Prizes 🏆',
     description: '🥇 1st Place: 1 SOL + Featured on Twitter\n🥈 2nd Place: 10 SUI + 20 ADA\n🥉 3rd Place: 20 ADA\n\nContest ends August 18th, 2025',
+    image: '/images/prizes.png'
   },
 ];
 
@@ -83,15 +87,15 @@ export default function ChallengeStepsCarousel({ isOpen, onClose }: ChallengeSte
         <div className="text-center mb-8">
           <h3 className="text-xl font-bold mb-4">{steps[currentStep].title}</h3>
           <p className="text-gray-300">{steps[currentStep].description}</p>
-          {steps[currentStep].image && (
+          <div className="mt-4 h-[450px] relative">
             <Image
               width={800}
               height={450}
-              src={steps[currentStep].image}
+              src={steps[currentStep].image || '/images/placeholder.png'}
               alt={`Step ${currentStep + 1}`}
-              className="mt-4 rounded-lg w-full object-cover"
+              className="rounded-lg w-full h-full object-cover"
             />
-          )}
+          </div>
         </div>
 
         {/* Navigation */}
