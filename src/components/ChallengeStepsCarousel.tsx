@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 interface Step {
@@ -82,7 +84,9 @@ export default function ChallengeStepsCarousel({ isOpen, onClose }: ChallengeSte
           <h3 className="text-xl font-bold mb-4">{steps[currentStep].title}</h3>
           <p className="text-gray-300">{steps[currentStep].description}</p>
           {steps[currentStep].image && (
-            <img
+            <Image
+              width={800}
+              height={450}
               src={steps[currentStep].image}
               alt={`Step ${currentStep + 1}`}
               className="mt-4 rounded-lg w-full object-cover"

@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+import Image from 'next/image';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import { getEntries, voteForEntry } from '@/lib/supabase';
@@ -127,7 +129,9 @@ export default function EcosystemContent({ onOpenCarousel, onOpenSubmission }: E
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {entry.profile_picture_url ? (
-                        <img
+                        <Image
+                          width={800}
+                          height={450}
                           src={entry.profile_picture_url}
                           alt={entry.username}
                           className="w-6 h-6 rounded-full"

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
+import Image from 'next/image';
 import { getUserProfile, updateUserProfile, createOrUpdateUserProfile, getUserEntry, deleteEntry } from '@/lib/supabase';
 import type { UserProfile, Entry } from '@/lib/types';
 import ConfirmationModal from '@/components/ConfirmationModal';
@@ -25,13 +26,7 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (ready && authenticated && user) {
-      initializeProfile();
-    }
-  }, [ready, authenticated, user]);
-
-  const initializeProfile = async () => {
+  const initializeProfile = useCallback(async () => {
     if (!authenticated || !user) {
       setIsLoading(false);
       return;
@@ -62,7 +57,13 @@ export default function Profile() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [authenticated, user]);
+
+  useEffect(() => {
+    if (ready && authenticated && user) {
+      initializeProfile();
+    }
+  }, [ready, authenticated, user, initializeProfile]);
 
   const handleDelete = async () => {
     if (!user?.id || !entry?.id) return;
@@ -163,16 +164,18 @@ export default function Profile() {
                     <button
                       key={lens.url}
                       onClick={() => {
-                        setAvatarUrl(lens.url);
+                        setProfilePictureUrl(lens.url);
                       }}
                       disabled={isSaving}
-                      className={`relative w-12 h-12 rounded-full transition-all duration-200 ${lens.url === avatarUrl ? 'bg-white/10 ring-2 ring-white scale-105' : 'hover:bg-white/5 hover:scale-105'} ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`relative w-12 h-12 rounded-full transition-all duration-200 ${lens.url === profilePictureUrl ? 'bg-white/10 ring-2 ring-white scale-105' : 'hover:bg-white/5 hover:scale-105'} ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
                     >
                       <div className="relative w-full h-full">
-                        <img 
+                        <Image 
                           src={lens.url} 
-                          alt={`${lens.color} lens`} 
-                          className="absolute inset-0 w-full h-full object-contain" 
+                          alt="Profile picture" 
+                          className="absolute inset-0 w-full h-full object-contain"
+                          width={48}
+                          height={48}
                         />
                       </div>
                     </button>
@@ -260,10 +263,12 @@ export default function Profile() {
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-full overflow-hidden bg-white/5 ring-2 ring-white/10">
                   <div className="relative w-full h-full">
-                    <img 
+                    <Image 
                       src={profilePictureUrl || '/avatars/Purps.svg'} 
                       alt="Selected lens" 
-                      className="absolute inset-0 w-full h-full object-contain" 
+                      className="absolute inset-0 w-full h-full object-contain"
+                      width={64}
+                      height={64}
                     />
                   </div>
                 </div>
@@ -300,10 +305,12 @@ export default function Profile() {
           {entry ? (
             <div className="space-y-4">
               <div className="rounded-lg overflow-hidden">
-                <img
+                <Image
                   src={entry.image_url}
                   alt={entry.description || 'Entry image'}
                   className="w-full rounded-lg aspect-video object-cover"
+                  width={800}
+                  height={450}
                 />
                 {entry.description && (
                   <p className="mt-4 text-gray-300">{entry.description}</p>

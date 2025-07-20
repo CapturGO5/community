@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { Dialog } from '@headlessui/react';
 import { usePrivy } from '@privy-io/react-auth';
 import { supabase } from '../lib/supabaseClient';
@@ -199,7 +200,9 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({ isOpen, onClos
                 >
                   {previewUrl ? (
                     <div className="relative">
-                      <img
+                      <Image
+                        width={800}
+                        height={450}
                         src={previewUrl}
                         alt="Preview"
                         className="max-h-64 mx-auto"

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
@@ -92,7 +93,7 @@ export default function LandingAnimation({ onEnter }: LandingAnimationProps) {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 1.2, duration: 0.8 }}
           >
-            <img 
+            <Image 
               src="/images/logo.png" 
               alt="capturGO Logo" 
               className="h-24 mb-6 object-contain"
