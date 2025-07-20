@@ -59,11 +59,11 @@ export async function createOrUpdateUserProfile(userId: string, email: string, u
 
     console.log('Profile created/updated successfully:', data);
     return data;
-  } catch (error) {
-    console.error('Error in createOrUpdateUserProfile:', error);
-    console.error('Error details:', error.details);
-    console.error('Error hint:', error.hint);
-    console.error('Error code:', error.code);
+  } catch (error: any) {
+    console.error('Error in createOrUpdateUserProfile:', error?.message || error);
+    console.error('Error details:', error?.details);
+    console.error('Error hint:', error?.hint);
+    console.error('Error code:', error?.code);
     throw error;
   }
 }
@@ -230,6 +230,32 @@ export async function voteForEntry(userId: string, entryId: string) {
   });
 
   if (error) throw error;
+}
+
+export async function checkUsernameAvailable(username: string): Promise<boolean> {
+  try {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('username', username)
+      .single();
+
+    if (error && error.code === 'PGRST116') {
+      // No user found with this username, so it's available
+      return true;
+    }
+
+    if (error) {
+      console.error('Error checking username availability:', error);
+      throw error;
+    }
+
+    // If we found a user, the username is not available
+    return !data;
+  } catch (error: any) {
+    console.error('Error in checkUsernameAvailable:', error?.message || error);
+    throw error;
+  }
 }
 
 export async function getLeaderboard(page = 1, perPage = 15) {
