@@ -14,9 +14,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     schema: 'public'
   },
   auth: {
-    // Don't persist auth state since we're using Privy
-    persistSession: false,
-    autoRefreshToken: false
+    persistSession: true,
+    autoRefreshToken: true
   },
   global: {
     headers: {
