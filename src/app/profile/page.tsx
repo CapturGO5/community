@@ -27,6 +27,7 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
 
   const initializeProfile = useCallback(async () => {
+    console.log('Initializing profile with user:', { userId: user?.id, authenticated, ready });
     if (!authenticated || !user) {
       setIsLoading(false);
       return;
@@ -42,10 +43,12 @@ export default function Profile() {
         getUserEntry(user.id)
       ]);
       
+      console.log('Profile data loaded:', profile);
       if (profile) {
         setUsername(profile.username || (user.email?.address ? generateDefaultUsername(user.email.address) : ''));
         setProfilePictureUrl(profile.profile_picture_url || '');
         setCountry(profile.country || '');
+      console.log('Set country state to:', profile.country || '');
       }
 
       if (entryData) {
