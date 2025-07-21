@@ -32,6 +32,7 @@ function encodeId(id: string): string {
 }
 
 export async function createOrUpdateUserProfile(userId: string, email: string, username: string, avatarUrl?: string, country?: string) {
+  console.log('Received request to update profile:', { userId, email, username, avatarUrl, country });
   console.log('Creating/updating user profile:', { userId, email, username, avatarUrl, country });
   
   try {

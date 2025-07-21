@@ -78,6 +78,7 @@ export default function Profile() {
   };
 
   const saveProfile = async (newUsername: string | null, newProfilePictureUrl: string, newCountry: string, closeEdit: boolean = false) => {
+    console.log('Saving profile with:', { newUsername, newProfilePictureUrl, newCountry });
     if (!user?.id || !user.email?.address) return;
     // If username is null or empty, generate a default one
     const usernameToSave = newUsername || generateDefaultUsername(user.email.address);
