@@ -17,6 +17,11 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     // Don't use Supabase auth - we're using Privy
     persistSession: false,
     autoRefreshToken: false
+  },
+  global: {
+    headers: {
+      'apikey': supabaseKey
+    }
   }
 });
 
