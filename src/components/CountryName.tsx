@@ -47,7 +47,9 @@ const countryNames: { [key: string]: string } = {
 };
 
 export function CountryName({ country }: CountryNameProps) {
+  console.log('CountryName component received:', { country });
   const countryCode = country.toLowerCase();
+  console.log('CountryName lookup:', { countryCode, found: countryNames[countryCode] });
   const countryName = countryNames[countryCode] || country;
 
   return (
