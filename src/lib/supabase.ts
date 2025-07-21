@@ -27,7 +27,9 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
-  return encodeURIComponent(id).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16));
+  const encoded = encodeURIComponent(id).replace(/[!'()*]/g, c => '%' + c.charCodeAt(0).toString(16));
+  console.log('Encoding ID:', { original: id, encoded });
+  return encoded;
 }
 
 export async function createOrUpdateUserProfile(userId: string, email: string, username: string, avatarUrl?: string, country?: string) {
