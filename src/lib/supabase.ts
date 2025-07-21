@@ -114,10 +114,11 @@ export async function hasExistingEntry(userId: string): Promise<boolean> {
 }
 
 export async function getUserEntry(userId: string): Promise<Entry | null> {
+  // Don't encode the ID for the query, as Supabase will handle it
   const { data, error } = await supabase
     .from('entries')
     .select('*')
-    .eq('user_id', encodeId(userId))
+    .eq('user_id', userId)
     .single();
 
   if (error) {
