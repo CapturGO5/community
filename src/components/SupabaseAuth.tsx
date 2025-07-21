@@ -19,14 +19,7 @@ export default function SupabaseAuth() {
             user.email.address.split('@')[0] // Use email prefix as initial name
           );
 
-          // Sign in with OTP (magic link)
-          const { error: signInError } = await supabase.auth.signInWithOtp({
-            email: user.email.address
-          });
-
-          if (signInError) {
-            console.error('Error signing in with Supabase:', signInError);
-          }
+          // No need to sign in with Supabase - we're only using it as a data store
         } catch (error) {
           console.error('Error syncing user with Supabase:', error);
         }

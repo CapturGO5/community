@@ -14,15 +14,9 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     schema: 'public'
   },
   auth: {
-    persistSession: true,
-    autoRefreshToken: true
-  },
-  global: {
-    headers: {
-      'Accept': '*/*',
-      'Content-Type': 'application/json',
-      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-    }
+    // Don't use Supabase auth - we're using Privy
+    persistSession: false,
+    autoRefreshToken: false
   }
 });
 
