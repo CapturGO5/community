@@ -88,6 +88,8 @@ export default function Profile() {
       await createOrUpdateUserProfile(user.id, user.email.address, usernameToSave, newProfilePictureUrl, newCountry);
       setUsername(usernameToSave);
       if (closeEdit) setIsEditing(false);
+      // Refresh profile data to get latest values
+      await initializeProfile();
     } catch (err) {
       console.error('Error updating profile:', err);
       setError('Failed to update profile');
