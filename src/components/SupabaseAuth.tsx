@@ -19,10 +19,9 @@ export default function SupabaseAuth() {
             user.email.address.split('@')[0] // Use email prefix as initial name
           );
 
-          // Then sign in with Supabase
-          const { error: signInError } = await supabase.auth.signInWithPassword({
-            email: user.email.address,
-            password: user.id
+          // Sign in with OTP (magic link)
+          const { error: signInError } = await supabase.auth.signInWithOtp({
+            email: user.email.address
           });
 
           if (signInError) {
