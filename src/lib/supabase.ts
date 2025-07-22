@@ -114,11 +114,13 @@ export async function hasExistingEntry(userId: string): Promise<boolean> {
 }
 
 export async function getUserEntry(userId: string): Promise<Entry | null> {
-  // Don't encode the ID for the query, as Supabase will handle it
+  // Encode colons in the ID to match how it's stored in the database
+  const encodedId = userId.replace(/:/g, '%3A');
+  console.log('Getting entry for user ID:', { original: userId, encoded: encodedId });
   const { data, error } = await supabase
     .from('entries')
     .select('*')
-    .eq('user_id', userId)
+    .eq('user_id', encodedId)
     .single();
 
   if (error) {
