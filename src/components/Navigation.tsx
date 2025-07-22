@@ -1,5 +1,13 @@
 'use client';
 
+/**
+ * Navigation component with responsive mobile menu.
+ * Features:
+ * - Automatically closes mobile menu on route changes
+ * - Closes on link clicks and authentication actions
+ * - Supports dropdown for authenticated users
+ */
+
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
