@@ -26,14 +26,16 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
       status: response.status,
       statusText: response.statusText,
       headers: responseHeaders,
-      accept: init?.headers?.['Accept'],
+      accept: init?.headers instanceof Headers ? init.headers.get('Accept') : 
+             typeof init?.headers === 'object' ? (init.headers as Record<string, string>)?.accept : undefined,
       contentType: responseHeaders['content-type']
     });
 
     // Check for 406 errors
     if (response.status === 406) {
       console.error('406 Not Acceptable Error - Content negotiation failed:', {
-        requestAccept: init?.headers?.['Accept'],
+        requestAccept: init?.headers instanceof Headers ? init.headers.get('Accept') : 
+                      typeof init?.headers === 'object' ? (init.headers as Record<string, string>)?.accept : undefined,
         responseType: responseHeaders['content-type']
       });
     }
