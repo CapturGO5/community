@@ -107,27 +107,35 @@ export async function createOrUpdateUserProfile(userId: string, email: string, u
 
 export async function getUserProfile(userId: string) {
   console.log('Getting user profile for ID:', userId);
+  const encodedId = encodeId(userId);
+  console.log('Encoded ID for query:', encodedId);
 
   try {
+    console.log('Sending Supabase request with encoded ID:', encodedId);
     const { data, error } = await supabase
       .from('user_profiles')
       .select('*')
-      .eq('id', encodeId(userId))
+      .eq('id', encodedId)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
-        console.log('No profile found for user:', userId);
+        console.log('No profile found for user:', { userId, encodedId });
         return null;
       }
-      console.error('Supabase error getting profile:', error);
+      console.error('Supabase error getting profile:', { error, userId, encodedId });
       throw error;
     }
 
-    console.log('Found user profile:', data);
+    console.log('Found user profile:', { data, userId, encodedId });
+    if (!data?.country) {
+      console.log('No country found in profile data:', { data, userId, encodedId });
+    } else {
+      console.log('Country found in profile:', data.country);
+    }
     return data as UserProfile;
   } catch (err) {
-    console.error('Error in getUserProfile:', err);
+    console.error('Error in getUserProfile:', { err, userId, encodedId });
     throw err;
   }
 }
