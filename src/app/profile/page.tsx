@@ -21,6 +21,11 @@ export default function Profile() {
   const [username, setUsername] = useState('');
   const [profilePictureUrl, setProfilePictureUrl] = useState('');
   const [country, setCountry] = useState('');
+
+  // Debug: Log country state changes
+  useEffect(() => {
+    console.log('Country state changed:', { country });
+  }, [country]);
   
   // Editing state
   const [isEditing, setIsEditing] = useState(false);
@@ -285,6 +290,16 @@ export default function Profile() {
               </div>
 
               <div>
+                {(() => {
+                  // Debug logging outside of JSX
+                  console.log('Rendering country section:', { country, isEditing });
+                  if (country) {
+                    console.log('Rendering CountryName with:', { country });
+                  } else {
+                    console.log('Rendering Not set state');
+                  }
+                  return null; // Return null to satisfy ReactNode type
+                })()}
                 <h2 className="text-sm font-medium text-white/60">Country</h2>
                 {country ? (
                   <CountryName country={country} />
