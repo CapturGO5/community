@@ -48,12 +48,18 @@ export default function Profile() {
         getUserEntry(user.id)
       ]);
       
-      console.log('Profile data loaded:', profile);
+      console.log('Profile data loaded:', { profile, hasCountry: !!profile?.country, country: profile?.country });
       if (profile) {
-        setUsername(profile.username || (user.email?.address ? generateDefaultUsername(user.email.address) : ''));
+        const defaultUsername = user.email?.address ? generateDefaultUsername(user.email.address) : '';
+        console.log('Setting profile state:', {
+          username: profile.username || defaultUsername,
+          profilePicture: profile.profile_picture_url || '',
+          country: profile.country || ''
+        });
+        setUsername(profile.username || defaultUsername);
         setProfilePictureUrl(profile.profile_picture_url || '');
         setCountry(profile.country || '');
-      console.log('Set country state to:', profile.country || '');
+        console.log('Set country state to:', profile.country || '');
       }
 
       if (entryData) {
