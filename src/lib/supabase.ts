@@ -118,63 +118,63 @@ export async function hasExistingEntry(userId: string): Promise<boolean> {
 }
 
 export async function getUserEntry(userId: string): Promise<Entry | null> {
-  console.log('Getting entry for user ID:', userId);
+  const encodedId = encodeId(userId);
+  console.log('Getting entry for user:', { userId, encodedId });
   try {
     const { data, error } = await supabase
       .from('entries')
       .select('*')
-      .eq('user_id', encodeId(userId))
+      .eq('user_id', encodedId)
       .single();
 
     if (error) {
       if (error.code === 'PGRST116') {
-        console.log('No entry found for user:', userId);
+        console.log('No entry found for user:', { userId, encodedId });
         return null;
       }
-      console.error('Supabase error getting entry:', error);
+      console.error('Supabase error getting entry:', { error, userId, encodedId });
       throw error;
     }
 
-    console.log('Found user entry:', data);
+    console.log('Found user entry:', { data, userId, encodedId });
     return data as Entry;
   } catch (err) {
-    console.error('Error in getUserEntry:', err);
+    console.error('Error in getUserEntry:', { err, userId, encodedId });
     throw err;
   }
 }
 
 export async function getEntries(page = 1, limit = 10) {
   console.log('Fetching entries:', { page, limit });
-
   try {
-    // Fetch entries with pagination
-    const { data, error } = await supabase
+    // Log request details for debugging
+    const start = (page - 1) * limit;
+    const end = page * limit - 1;
+    console.log('Entries query:', { start, end });
+
+    const { data, error, status } = await supabase
       .from('entries')
       .select('*')
       .order('created_at', { ascending: false })
-      .range((page - 1) * limit, page * limit - 1);
+      .range(start, end);
 
     if (error) {
-      console.error('Error fetching entries:', error);
-      throw error;
-    }
-
-    if (!data || data.length === 0) {
-      console.log('No entries found');
+      console.error('Error fetching entries:', { error, status, page, limit });
       return [];
     }
 
-    console.log('Fetched entries:', data);
+    if (!data || data.length === 0) {
+      console.log('No entries found:', { page, limit });
+      return [];
+    }
+
+    console.log('Fetched entries:', { count: data.length, page, limit });
     return data as Entry[];
   } catch (error) {
-    console.error('Error in getEntries:', error);
-    throw error;
+    console.error('Error in getEntries:', { error, page, limit });
+    return [];
   }
 }
-
-
-
-
 
 export async function updateUserProfile(userId: string, updates: { username?: string; bio?: string | null; email: string }) {
   const { data, error } = await supabase
