@@ -84,15 +84,24 @@ export async function createOrUpdateUserProfile(userId: string, email: string, u
   console.log('Creating/updating user profile:', { userId, email, username, avatarUrl, country });
   
   try {
+    // Build update object with only provided fields
+    const updateData: any = {
+      id: encodeId(userId),
+      email,
+      username
+    };
+
+    // Only include optional fields if they are explicitly provided
+    if (avatarUrl !== undefined) {
+      updateData.profile_picture_url = avatarUrl;
+    }
+    if (country !== undefined) {
+      updateData.country = country;
+    }
+
     const { data, error } = await supabase
       .from('user_profiles')
-      .upsert({
-        id: encodeId(userId),
-        email,
-        username,
-        profile_picture_url: avatarUrl || null,
-        country: country || null
-      }, {
+      .upsert(updateData, {
         onConflict: 'id'
       })
       .select()
