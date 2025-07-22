@@ -4,10 +4,28 @@ import Footer from '../components/Footer';
 import SupabaseAuth from '../components/SupabaseAuth';
 import Providers from './providers';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { defaultSEO } from '../utils/seo-config';
 
 export const metadata = {
-  title: 'capturGO Community',
-  description: 'Join the CapturGO community',
+  ...defaultSEO,
+  metadataBase: new URL('https://community.capturgo.com'),
+  alternates: {
+    canonical: '/',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: '555959a994057ed3'
+  },
 };
 
 export default function RootLayout({
