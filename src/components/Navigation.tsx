@@ -16,6 +16,7 @@ export default function Navigation() {
   const handleWebsiteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     setIsModalOpen(true);
+    setIsMenuOpen(false);
   };
 
   const handleRedirect = () => {
@@ -151,12 +152,14 @@ export default function Navigation() {
             </button>
             <Link
               href="/ecosystem"
+              onClick={() => setIsMenuOpen(false)}
               className="block text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               Ecosystem
             </Link>
             <Link
               href="/leaderboard"
+              onClick={() => setIsMenuOpen(false)}
               className="block text-gray-300 hover:text-white px-3 py-2 rounded-md text-base font-medium"
             >
               Leaderboard
@@ -166,12 +169,16 @@ export default function Navigation() {
               <>
                 <Link 
                   href="/profile" 
+                  onClick={() => setIsMenuOpen(false)}
                   className="block text-white/70 hover:text-white px-3 py-2 rounded-md text-base font-medium"
                 >
                   Profile
                 </Link>
                 <button 
-                  onClick={() => logout()}
+                  onClick={() => {
+                    logout();
+                    setIsMenuOpen(false);
+                  }}
                   className="w-full text-left px-3 py-2 text-base font-medium text-white/70 hover:text-white"
                 >
                   Logout
@@ -179,7 +186,10 @@ export default function Navigation() {
               </>
             ) : (
               <button 
-                onClick={() => login()}
+                onClick={() => {
+                  login();
+                  setIsMenuOpen(false);
+                }}
                 className="w-full text-left px-3 py-2 text-base font-medium text-white/70 hover:text-white"
               >
                 Login
