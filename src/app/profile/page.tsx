@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
 import Image from 'next/image';
 import { getUserProfile, updateUserProfile, createOrUpdateUserProfile, getUserEntry, deleteEntry } from '@/lib/supabase';
@@ -32,6 +32,33 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
 
   const initializeProfile = useCallback(async () => {
+    if (!user?.id) return;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Use Promise.all for parallel requests
+      const [profile, entryData] = await Promise.all([
+        getUserProfile(user.id),
+        getUserEntry(user.id)
+      ]);
+      
+      if (profile) {
+        const defaultUsername = user.email?.address ? generateDefaultUsername(user.email.address) : '';
+        setUsername(profile.username || defaultUsername);
+        setProfilePictureUrl(profile.profile_picture_url || '');
+        setCountry(profile.country || '');
+      }
+
+      if (entryData) {
+        setEntry(entryData);
+      }
+    } catch (err) {
+      console.error('Error fetching profile data:', err);
+      setError('Failed to load profile data');
+    } finally {
+      setIsLoading(false);
+    }
     console.log('Initializing profile with user:', { userId: user?.id, authenticated, ready });
     if (!authenticated || !user) {
       setIsLoading(false);

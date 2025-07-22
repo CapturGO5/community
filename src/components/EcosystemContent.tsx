@@ -132,11 +132,13 @@ export default function EcosystemContent({ onOpenCarousel, onOpenSubmission }: E
                     <div className="flex items-center gap-2">
                       {entry.profile_picture_url ? (
                         <Image
-                          width={800}
-                          height={450}
+                          width={48}
+                          height={48}
                           src={entry.profile_picture_url}
                           alt={entry.username}
                           className="w-6 h-6 rounded-full"
+                          loading="lazy"
+                          sizes="48px"
                         />
                       ) : (
                         <div className="w-6 h-6 rounded-full bg-white/10" />
