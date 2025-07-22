@@ -117,21 +117,29 @@ export async function hasExistingEntry(userId: string): Promise<boolean> {
 }
 
 export async function getUserEntry(userId: string): Promise<Entry | null> {
-  // Encode colons in the ID to match how it's stored in the database
-  const encodedId = userId.replace(/:/g, '%3A');
-  console.log('Getting entry for user ID:', { original: userId, encoded: encodedId });
-  const { data, error } = await supabase
-    .from('entries')
-    .select('*')
-    .eq('user_id', encodedId)
-    .single();
+  console.log('Getting entry for user ID:', userId);
+  try {
+    const { data, error } = await supabase
+      .from('entries')
+      .select('*')
+      .eq('user_id', encodeId(userId))
+      .single();
 
-  if (error) {
-    if (error.code === 'PGRST116') return null;
-    throw error;
+    if (error) {
+      if (error.code === 'PGRST116') {
+        console.log('No entry found for user:', userId);
+        return null;
+      }
+      console.error('Supabase error getting entry:', error);
+      throw error;
+    }
+
+    console.log('Found user entry:', data);
+    return data as Entry;
+  } catch (err) {
+    console.error('Error in getUserEntry:', err);
+    throw err;
   }
-
-  return data as Entry;
 }
 
 export async function getEntries(page = 1, limit = 10) {
