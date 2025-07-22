@@ -38,12 +38,7 @@ DROP POLICY IF EXISTS "Allow users to delete their own entries" ON entries;
 CREATE POLICY "Allow API access to read entries"
   ON entries
   FOR SELECT
-  USING (
-    -- Allow access with valid API key
-    auth.role() = 'anon' OR
-    -- Allow access to authenticated users
-    auth.role() = 'authenticated'
-  );
+  USING (true);
 
 CREATE POLICY "Allow API access to insert entries"
   ON entries
