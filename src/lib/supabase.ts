@@ -31,8 +31,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
-  // Don't double-encode colons that are already encoded
-  const encoded = id.replace(/:/g, '%3A');
+  // Use built-in URL encoding to handle all special characters
+  const encoded = encodeURIComponent(id);
   console.log('Encoding ID:', { original: id, encoded });
   return encoded;
 }
