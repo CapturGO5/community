@@ -102,9 +102,9 @@ export default function Profile() {
       console.error('Error updating profile:', err);
       setError('Failed to update profile');
       // Revert changes on error
-      setUsername(username);
-      setProfilePictureUrl(profilePictureUrl);
-      setCountry(country);
+      setUsername(usernameToSave);
+      setProfilePictureUrl(newProfilePictureUrl);
+      setCountry(newCountry);
     } finally {
       setIsSaving(false);
     }
