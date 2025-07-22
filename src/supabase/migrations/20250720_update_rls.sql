@@ -1,3 +1,8 @@
+-- Enable RLS on all tables
+ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE votes ENABLE ROW LEVEL SECURITY;
+
 -- Drop existing RLS policies
 DROP POLICY IF EXISTS "Allow users to read their own profiles" ON user_profiles;
 DROP POLICY IF EXISTS "Allow users to update their own profiles" ON user_profiles;
