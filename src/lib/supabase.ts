@@ -21,7 +21,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   global: {
     headers: {
       'apikey': supabaseKey,
-      'Accept': '*/*',
+      'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Prefer': 'return=representation'
     }
