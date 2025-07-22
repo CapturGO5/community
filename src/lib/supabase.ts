@@ -8,6 +8,31 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error('Missing Supabase environment variables');
 }
 
+// Custom fetch interceptor for debugging
+const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+  // Log request details
+  console.log('Supabase request:', {
+    url: input.toString(),
+    method: init?.method || 'GET',
+    headers: init?.headers
+  });
+
+  try {
+    const response = await fetch(input, init);
+    // Log response details
+    console.log('Supabase response:', {
+      url: input.toString(),
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries())
+    });
+    return response;
+  } catch (error) {
+    console.error('Supabase fetch error:', error);
+    throw error;
+  }
+};
+
 // Create a client with public access
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   db: {
@@ -25,7 +50,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Prefer': 'return=representation'
-    }
+    },
+    fetch: customFetch
   }
 });
 
