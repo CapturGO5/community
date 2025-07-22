@@ -3,6 +3,7 @@ export interface UserProfile {
   email: string;
   username: string;
   profile_picture_url?: string | null;
+  country?: string | null;
 }
 
 export interface Entry {
