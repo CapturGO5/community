@@ -26,6 +26,18 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
       'Content-Type': 'application/json',
       'Prefer': 'return=representation'
     }
+  },
+  // Custom fetch configuration to handle API requests
+  fetch: (url, options = {}) => {
+    // Log the request details for debugging
+    console.log('Supabase fetch:', { url, options });
+    // Ensure headers are properly merged
+    const headers = {
+      ...options.headers,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+    return fetch(url, { ...options, headers });
   }
 });
 
