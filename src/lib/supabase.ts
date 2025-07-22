@@ -20,7 +20,8 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
   },
   global: {
     headers: {
-      'apikey': supabaseKey
+      'apikey': supabaseKey,
+      'Accept': 'application/json'
     }
   }
 });
