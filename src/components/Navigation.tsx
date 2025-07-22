@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import Logo from './Logo';
 import { usePrivy } from '@privy-io/react-auth';
 import Modal from './Modal';
@@ -12,6 +13,12 @@ export default function Navigation() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const closeTimeoutRef = useRef<NodeJS.Timeout>();
   const { login, authenticated, logout } = usePrivy();
+  const pathname = usePathname();
+
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [pathname]);
 
   const handleWebsiteClick = (e: React.MouseEvent) => {
     e.preventDefault();
