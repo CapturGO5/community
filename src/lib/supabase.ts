@@ -20,12 +20,24 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   try {
     const response = await fetch(input, init);
     // Log response details
+    const responseHeaders = Object.fromEntries(response.headers.entries());
     console.log('Supabase response:', {
       url: input.toString(),
       status: response.status,
       statusText: response.statusText,
-      headers: Object.fromEntries(response.headers.entries())
+      headers: responseHeaders,
+      accept: init?.headers?.['Accept'],
+      contentType: responseHeaders['content-type']
     });
+
+    // Check for 406 errors
+    if (response.status === 406) {
+      console.error('406 Not Acceptable Error - Content negotiation failed:', {
+        requestAccept: init?.headers?.['Accept'],
+        responseType: responseHeaders['content-type']
+      });
+    }
+
     return response;
   } catch (error) {
     console.error('Supabase fetch error:', error);
