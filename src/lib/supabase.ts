@@ -17,14 +17,14 @@ const SUPABASE_KEY: string = supabaseKey;
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
   if (!privyUserId) return {};
   
-  // Ensure we have the raw Privy ID (not URL encoded)
-  const rawPrivyId = decodeURIComponent(privyUserId);
+  // Ensure we have the URL-encoded Privy ID to match database format
+  const encodedId = encodeId(privyUserId);
 
   // Use Supabase's native JWT format
   return {
     'apikey': SUPABASE_KEY,
     'Authorization': `Bearer ${SUPABASE_KEY}`,
-    'X-User-Id': rawPrivyId
+    'X-User-Id': encodedId
   };
 }
 
@@ -97,16 +97,15 @@ export const supabase = createSupabaseClient();
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
-  // For Privy IDs, we need to decode first in case they're already encoded
-  // then encode properly for URL parameters
+  // For Privy IDs, we need to ensure they match the database format
   try {
     // Try to decode first in case it's already encoded
     const decodedId = decodeURIComponent(id);
-    // Now encode properly for URL parameters, but preserve colons
-    return decodedId.replace(/[^\w:]/g, encodeURIComponent);
+    // Now encode everything to match database format
+    return encodeURIComponent(decodedId);
   } catch {
     // If decoding fails, assume it's not encoded
-    return id.replace(/[^\w:]/g, encodeURIComponent);
+    return encodeURIComponent(id);
   }
 }
 
