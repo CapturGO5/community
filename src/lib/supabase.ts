@@ -13,18 +13,22 @@ if (!supabaseUrl || !supabaseKey) {
 const SUPABASE_URL: string = supabaseUrl;
 const SUPABASE_KEY: string = supabaseKey;
 
-// Helper to generate auth headers using Supabase's native JWT handling
+// Helper to generate auth headers using Supabase's built-in auth
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
   if (!privyUserId) return {};
   
   // Ensure we have the URL-encoded Privy ID to match database format
   const encodedId = encodeId(privyUserId);
 
-  // Use Supabase's native JWT format
+  // Use Supabase's built-in auth mechanism
   return {
     'apikey': SUPABASE_KEY,
     'Authorization': `Bearer ${SUPABASE_KEY}`,
-    'X-User-Id': encodedId
+    'Prefer': 'return=minimal',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-Client-Info': 'privy-website',
+    'X-Client-User-Id': encodedId
   };
 }
 
