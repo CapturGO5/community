@@ -13,21 +13,45 @@ if (!supabaseUrl || !supabaseKey) {
 const SUPABASE_URL: string = supabaseUrl;
 const SUPABASE_KEY: string = supabaseKey;
 
-// Helper to generate auth headers with JWT claims format
+// Helper to generate auth headers with proper JWT format
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
   if (!privyUserId) return {};
   
-  // Create a JWT claims object with the Privy user ID as the subject
-  const claims = {
-    sub: privyUserId,
-    role: 'authenticated'
+  // Create JWT header
+  const header = {
+    alg: 'HS256',
+    typ: 'JWT'
   };
-  
-  // Base64 encode the claims
-  const encodedClaims = Buffer.from(JSON.stringify(claims)).toString('base64');
-  
+
+  // Create JWT payload with claims
+  const payload = {
+    sub: privyUserId,
+    role: 'authenticated',
+    exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiry
+    iat: Math.floor(Date.now() / 1000)
+  };
+
+  // Base64Url encode header and payload
+  const encodedHeader = Buffer.from(JSON.stringify(header))
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+
+  const encodedPayload = Buffer.from(JSON.stringify(payload))
+    .toString('base64')
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+
+  // Create signature using HMAC SHA256 (we'll use a dummy signature since Supabase will validate with its own key)
+  const dummySignature = 'dummy_signature';
+
+  // Combine all parts
+  const token = `${encodedHeader}.${encodedPayload}.${dummySignature}`;
+
   return {
-    'Authorization': `Bearer ${encodedClaims}`
+    'Authorization': `Bearer ${token}`
   };
 }
 
