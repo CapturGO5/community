@@ -1,11 +1,21 @@
 import { createClient } from '@supabase/supabase-js';
 import { UserProfile, Entry } from './types';
 
+// Ensure environment variables are available
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
+  throw new Error('Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL and/or NEXT_PUBLIC_SUPABASE_ANON_KEY');
+}
+
+// Type-safe environment variables
+const SUPABASE_URL: string = supabaseUrl;
+const SUPABASE_KEY: string = supabaseKey;
+
+// Helper to generate auth headers
+function getAuthHeaders(privyUserId: string | null): Record<string, string> {
+  return privyUserId ? { 'Authorization': `Bearer ${privyUserId}` } : {};
 }
 
 // Custom fetch interceptor for debugging
@@ -47,26 +57,33 @@ const customFetch = async (input: RequestInfo | URL, init?: RequestInit) => {
   }
 };
 
-// Create a client with public access
-export const supabase = createClient(supabaseUrl, supabaseKey, {
-  db: {
-    schema: 'public'
-  },
-  auth: {
-    // Don't use Supabase auth - we're using Privy
-    persistSession: false,
-    autoRefreshToken: false
-  },
-  global: {
-    headers: {
-      'apikey': supabaseKey,
-      'Accept': '*/*',  // Accept any content type
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation'
+// Create a Supabase client factory that accepts a Privy user ID
+export function createSupabaseClient(privyUserId: string | null = null) {
+  return createClient(SUPABASE_URL, SUPABASE_KEY, {
+    db: {
+      schema: 'public'
     },
-    fetch: customFetch
-  }
-});
+    auth: {
+      // Don't use Supabase auth - we're using Privy
+      persistSession: false,
+      autoRefreshToken: false
+    },
+    global: {
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Accept': '*/*',  // Accept any content type
+        'Content-Type': 'application/json',
+        'Prefer': 'return=representation',
+        // Pass Privy user ID as Authorization header for RLS policies
+        ...getAuthHeaders(privyUserId)
+      },
+      fetch: customFetch
+    }
+  });
+}
+
+// Default client for unauthenticated requests
+export const supabase = createSupabaseClient();
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
