@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePrivy } from '@privy-io/react-auth';
-import { getUserProfile, createOrUpdateUserProfile } from '../lib/supabase';
+import { createSupabaseClient } from '../lib/supabase';
 import { generateUsername } from '../lib/generateUsername';
 
 export function useUsernameSetup() {
@@ -42,13 +42,21 @@ export function useUsernameSetup() {
           return;
         }
 
+        // Create authenticated Supabase client
+        const supabase = createSupabaseClient(user.id);
+
         // Check if user profile exists
         console.log('Checking for existing profile for:', {
           userId: user.id,
           email: email
         });
 
-        const profile = await getUserProfile(user.id);
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
         console.log('Profile check result:', profile);
         
         if (!profile) {
@@ -61,12 +69,17 @@ export function useUsernameSetup() {
           
           try {
             // Create profile with email and username
-            const result = await createOrUpdateUserProfile(
-              user.id,
-              email,
-              randomUsername
-            );
-            
+            const { data: result, error } = await supabase
+              .from('user_profiles')
+              .upsert({
+                id: user.id,
+                email: email,
+                name: randomUsername
+              }, {
+                onConflict: 'id'
+              });
+
+            if (error) throw error;
             console.log('Profile creation result:', result);
           } catch (err) {
             console.error('Error creating profile:', err);
@@ -74,7 +87,7 @@ export function useUsernameSetup() {
           }
         } else {
           console.log('Existing profile found:', {
-            username: profile.username,
+            name: profile.name,
             email: profile.email
           });
         }

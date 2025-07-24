@@ -2,7 +2,7 @@
 
 import { PrivyProvider, usePrivy } from '@privy-io/react-auth';
 import { type ReactNode, useEffect, useState } from 'react';
-import { getUserProfile, createOrUpdateUserProfile } from '../lib/supabase';
+import { createSupabaseClient } from '../lib/supabase';
 
 function ProvidersContent({ children }: { children: ReactNode }) {
   const { user, ready } = usePrivy();
@@ -25,8 +25,15 @@ function ProvidersContent({ children }: { children: ReactNode }) {
           return;
         }
 
+        // Create authenticated Supabase client
+        const supabase = createSupabaseClient(user.id);
+
         // Check if user profile exists
-        const profile = await getUserProfile(user.id);
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
         
         if (!profile) {
           // Generate username from email (remove @ and domain)
@@ -34,11 +41,17 @@ function ProvidersContent({ children }: { children: ReactNode }) {
           const randomUsername = `${baseUsername}${Math.floor(Math.random() * 1000)}`;
           
           // Create profile with email and username
-          await createOrUpdateUserProfile(
-            user.id,
-            email,
-            randomUsername
-          );
+          const { error } = await supabase
+            .from('user_profiles')
+            .upsert({
+              id: user.id,
+              email: email,
+              name: randomUsername
+            }, {
+              onConflict: 'id'
+            });
+
+          if (error) throw error;
         }
       } catch (error) {
         console.error('Error in username setup:', error);
