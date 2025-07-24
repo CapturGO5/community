@@ -13,9 +13,22 @@ if (!supabaseUrl || !supabaseKey) {
 const SUPABASE_URL: string = supabaseUrl;
 const SUPABASE_KEY: string = supabaseKey;
 
-// Helper to generate auth headers
+// Helper to generate auth headers with JWT claims format
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
-  return privyUserId ? { 'Authorization': `Bearer ${privyUserId}` } : {};
+  if (!privyUserId) return {};
+  
+  // Create a JWT claims object with the Privy user ID as the subject
+  const claims = {
+    sub: privyUserId,
+    role: 'authenticated'
+  };
+  
+  // Base64 encode the claims
+  const encodedClaims = Buffer.from(JSON.stringify(claims)).toString('base64');
+  
+  return {
+    'Authorization': `Bearer ${encodedClaims}`
+  };
 }
 
 // Custom fetch interceptor for debugging
@@ -87,15 +100,9 @@ export const supabase = createSupabaseClient();
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
-  // Check if the ID is already encoded
-  if (id.includes('%')) {
-    console.log('ID is already encoded:', id);
-    return id;
-  }
-  // Use built-in URL encoding to handle all special characters
-  const encoded = encodeURIComponent(id);
-  console.log('Encoding ID:', { original: id, encoded });
-  return encoded;
+  // No need to encode Privy IDs for Supabase RLS policies
+  // Just return them as is since they'll be handled by the JWT claims
+  return id;
 }
 
 export async function createOrUpdateUserProfile(userId: string, email: string, username: string, avatarUrl?: string, country?: string) {
