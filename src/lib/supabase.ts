@@ -13,48 +13,18 @@ if (!supabaseUrl || !supabaseKey) {
 const SUPABASE_URL: string = supabaseUrl;
 const SUPABASE_KEY: string = supabaseKey;
 
-// Helper to generate auth headers with proper JWT format
+// Helper to generate auth headers using Supabase's native JWT handling
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
   if (!privyUserId) return {};
   
   // Ensure we have the raw Privy ID (not URL encoded)
   const rawPrivyId = decodeURIComponent(privyUserId);
 
-  // Create JWT header
-  const header = {
-    alg: 'HS256',
-    typ: 'JWT'
-  };
-
-  // Create JWT payload with claims
-  const payload = {
-    sub: rawPrivyId, // Use raw ID in JWT claims
-    role: 'authenticated',
-    exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiry
-    iat: Math.floor(Date.now() / 1000)
-  };
-
-  // Base64Url encode header and payload
-  const encodedHeader = Buffer.from(JSON.stringify(header))
-    .toString('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-
-  const encodedPayload = Buffer.from(JSON.stringify(payload))
-    .toString('base64')
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_');
-
-  // Create signature using HMAC SHA256 (we'll use a dummy signature since Supabase will validate with its own key)
-  const dummySignature = 'dummy_signature';
-
-  // Combine all parts
-  const token = `${encodedHeader}.${encodedPayload}.${dummySignature}`;
-
+  // Use Supabase's native JWT format
   return {
-    'Authorization': `Bearer ${token}`
+    'apikey': SUPABASE_KEY,
+    'Authorization': `Bearer ${SUPABASE_KEY}`,
+    'X-User-Id': rawPrivyId
   };
 }
 
@@ -132,11 +102,11 @@ function encodeId(id: string): string {
   try {
     // Try to decode first in case it's already encoded
     const decodedId = decodeURIComponent(id);
-    // Now encode properly for URL parameters
-    return encodeURIComponent(decodedId);
+    // Now encode properly for URL parameters, but preserve colons
+    return decodedId.replace(/[^\w:]/g, encodeURIComponent);
   } catch {
-    // If decoding fails, assume it's not encoded and encode it directly
-    return encodeURIComponent(id);
+    // If decoding fails, assume it's not encoded
+    return id.replace(/[^\w:]/g, encodeURIComponent);
   }
 }
 
