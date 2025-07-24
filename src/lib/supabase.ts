@@ -17,6 +17,9 @@ const SUPABASE_KEY: string = supabaseKey;
 function getAuthHeaders(privyUserId: string | null): Record<string, string> {
   if (!privyUserId) return {};
   
+  // Ensure we have the raw Privy ID (not URL encoded)
+  const rawPrivyId = decodeURIComponent(privyUserId);
+
   // Create JWT header
   const header = {
     alg: 'HS256',
@@ -25,7 +28,7 @@ function getAuthHeaders(privyUserId: string | null): Record<string, string> {
 
   // Create JWT payload with claims
   const payload = {
-    sub: privyUserId,
+    sub: rawPrivyId, // Use raw ID in JWT claims
     role: 'authenticated',
     exp: Math.floor(Date.now() / 1000) + (60 * 60), // 1 hour expiry
     iat: Math.floor(Date.now() / 1000)
@@ -124,9 +127,17 @@ export const supabase = createSupabaseClient();
 
 // Helper function to safely encode IDs for URLs
 function encodeId(id: string): string {
-  // No need to encode Privy IDs for Supabase RLS policies
-  // Just return them as is since they'll be handled by the JWT claims
-  return id;
+  // For Privy IDs, we need to decode first in case they're already encoded
+  // then encode properly for URL parameters
+  try {
+    // Try to decode first in case it's already encoded
+    const decodedId = decodeURIComponent(id);
+    // Now encode properly for URL parameters
+    return encodeURIComponent(decodedId);
+  } catch {
+    // If decoding fails, assume it's not encoded and encode it directly
+    return encodeURIComponent(id);
+  }
 }
 
 export async function createOrUpdateUserProfile(userId: string, email: string, username: string, avatarUrl?: string, country?: string) {
